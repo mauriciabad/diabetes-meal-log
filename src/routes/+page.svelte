@@ -3,6 +3,7 @@
 	import { successScores } from '../utils/constants/successScores';
 	import { testMealEntries, testMeals } from '../utils/testingData';
 	import type { Insulin } from '../utils/types';
+	import Time from 'svelte-time';
 
 	export const preferences = persisted('preferences', {
 		// meals: [] as Meal[],
@@ -56,24 +57,46 @@
 				<ul class="mt-4 space-y-4">
 					{#each mealFullData.entries as entry (entry.id)}
 						<li class="rounded-lg bg-gray-100 p-4">
-							<p>Created at: {entry.createdAt.toLocaleString()}</p>
-							<p>
-								Success score: <span class={`text-${successScores[entry.successScore].color}-500`}
-									>{successScores[entry.successScore].text}</span
-								>
-							</p>
-							<p>Notes: {entry.notes}</p>
+							<ul class="flex flex-wrap space-x-4">
+								{#each entry.insulinInjections as injection}
+									<li class="rounded-lg">
+										<p>
+											<span
+												class={`${injection.insulin.type === 'fast' ? 'text-red-500' : 'text-blue-500'}`}
+											>
+												{injection.dose}u
+											</span>
 
-							<ul class="mt-4 space-y-4">
-								{#each entry.insulinInjections as injection (injection.insulinId)}
-									<li class="rounded-lg bg-gray-200 p-4">
-										<h4 class="text-lg font-bold">Insulin injection</h4>
-										<p>Insulin: {injection.insulin.name}</p>
-										<p>Dose: {injection.dose} units</p>
-										<p>Moment: {injection.moment.minutes} minutes {injection.moment.from}</p>
+											{#if injection.moment.minutes}
+												{Math.abs(injection.moment.minutes)}min
+											{/if}
+
+											{injection.moment.minutes === 0
+												? ''
+												: injection.moment.minutes > 0
+													? 'after'
+													: 'before'}
+											{injection.moment.from === 'start'
+												? 'starting'
+												: injection.moment.from === 'end'
+													? 'ending'
+													: 'during'}
+										</p>
 									</li>
 								{/each}
 							</ul>
+
+							<p>
+								<Time relative timestamp={entry.createdAt} />
+							</p>
+							<p>
+								<span class={`text-${successScores[entry.successScore].color}-500`}
+									>{successScores[entry.successScore].text}</span
+								>
+							</p>
+							{#if entry.notes}
+								<p class="mt-4">{entry.notes}</p>
+							{/if}
 						</li>
 					{/each}
 				</ul>
