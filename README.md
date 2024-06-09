@@ -2,6 +2,8 @@
 
 Log how much insulin you need for your most frequent meals to always use the perfect amount!
 
+<https://mealslog.mauri.app>
+
 ## Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
